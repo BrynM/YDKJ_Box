@@ -20,7 +20,7 @@ The switch and LED are for programming the Micro. It's a little bit of a pain to
 
 ## Breadboard Plan
 
-![Breadboard Plan](circuit_plan_bb.png?raw=true "Breadboard Plan")
+![Breadboard Plan](circuit_plan_bb.png?raw=true&1234 "Breadboard Plan")
 
 ### Controller
 
