@@ -46,9 +46,9 @@ Externally, the box itself has RJ11 connectors for the controllers, HDMI and pow
 |Button Group|Key(s)|Analog Value|Use|
 |----|----|----|----|
 |*OnetThruFour*|-|~1024|(idle input)|
-|*OnetThruFour*|`1`|~0|Primary Answer|
-|*OnetThruFour*|`2`|~130|Primary Answer|
-|*OnetThruFour*|`3`|~315|Primary Answer|
+|*OnetThruFour*|`1`|~0|Primary Answer, "Screw" Recipient|
+|*OnetThruFour*|`2`|~130|Primary Answer, "Screw" Recipient|
+|*OnetThruFour*|`3`|~315|Primary Answer, "Screw" Recipient|
 |*OnetThruFour*|`4`|~480|Primary Answer|
 |*AB*|`A`|-|Game Mode Selector|
 |*AB*|`B`|-|Game Mode Selector|
