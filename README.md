@@ -10,7 +10,7 @@ If you want to go really crazy, consider including a [portable projector](https:
 
 ![Schematic](circuit_plan_schem.png?raw=true "Schematic")
 
-Rather than try to squeeze some weird button matrix scheme gor 18 buttons into 10 digital inputs while worrying about buttons overriding eachother, I used resistor ladders and grouped buttons together. In a resistor ladder, the first (primary) button on the chain will win out. I took that into account while grouping.
+Rather than try to squeeze some weird button matrix scheme for 18 buttons into 10 digital inputs while worrying about buttons overriding eachother, I used resistor ladders and grouped buttons together. In a resistor ladder, the first (primary) button on the chain will win out. I took that into account while grouping.
 
 Each controller is a two step ladder with the "buzzuer" arcade button in the primary position. this gives each player an equal timing chance to buzz in for an answer. Since we're basically using the Micro as a proxy for keyproesses, we can fire on input changes right away. The player can only "screw" another player after buzzing in. With the buzzer being the primary, a panicky player can squeeze both buttons at once and register their buzzer.
 
