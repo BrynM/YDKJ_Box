@@ -20,14 +20,14 @@ Each controller has two buttons - the main  player "buzzer" button (in this case
 
 #### Controller Buttons
 
-|Controller|Key(s)|Use|
-|----|----|----|
-|One|Q|Player One Main Buzzer|
-|One|S|"Screw" Button|
-|Two|B|Player Two Main Buzzer|
-|Two|S|"Screw" Button|
-|Three|P|Player Three Main Buzzer|
-|Three|S|"Screw" Button|
+|Controller|Key(s)|Analog Value|Use|
+|----|----|----|----|
+|One|Q|-|Player One Main Buzzer|
+|One|S|-|"Screw" Button|
+|Two|B|-|Player Two Main Buzzer|
+|Two|S|-|"Screw" Button|
+|Three|-|P|Player Three Main Buzzer|
+|Three|-|S|"Screw" Button|
 
 # Box
 
