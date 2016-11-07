@@ -6,6 +6,14 @@ A case/box/contraption for three game show style player button controllers to be
 
 If you want to go really crazy, consider including a [portable projector](https://rif6.com/product/cube/) in the box.
 
+## Schematic
+
+![Schematic](circuit_plan_schem.png?raw=true "Schematic")
+
+## Breadboard Plan
+
+![Breadboard Plan](circuit_plan_bb.png?raw=true "Breadboard Plan")
+
 ### Controller
 
 Each controller has two buttons - the main  player "buzzer" button (in this case using arcade buttons) and a secondary "screw" button.
@@ -42,11 +50,3 @@ Externally, the box itself has RJ11 connectors for the controllers, HDMI and pow
 |Main|R|-|Used for menu choices|
 |Main|S|-|Used for menu choices|
 |Main|[esc]|-|Used to pause, bring up the menu, or dismiss things|
-
-## Schematic
-
-![Schematic](circuit_plan_schem.png?raw=true "Schematic")
-
-## Breadboard Plan
-
-![Breadboard Plan](circuit_plan_bb.png?raw=true "Breadboard Plan")
