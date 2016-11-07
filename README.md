@@ -27,13 +27,21 @@ Externally, the box itself has RJ11 connectors for the controllers, HDMI and pow
 
 #### Box Buttons
 
-|Button Group|Key(s)|Use|
-|----|----|----|
-|OneThroughFour|1-4|Primary Answers|
-|AB|A, B|Game Mode Selectors|
-|Main|[space]|Used for "skip" and misc. input|
-|Main|N, Q, R, S|Used for menu choices|
-|Main|[esc]|Used to pause, bring up the menu, or dismiss things|
+|Button Group|Key(s)|Analog Value|Use|
+|----|----|----|----|
+|OneThroughFour|-|~1024|(idle input)|
+|OneThroughFour|1|~0|Primary Answer|
+|OneThroughFour|2|~130|Primary Answer|
+|OneThroughFour|3|~315|Primary Answer|
+|OneThroughFour|4|~480|Primary Answer|
+|AB|A|-|Game Mode Selector|
+|AB|B|-|Game Mode Selector|
+|Main|[space]|-|Used for "skip" and misc. input|
+|Main|N|-|Used for menu choices|
+|Main|Q|-|Used for menu choices|
+|Main|R|-|Used for menu choices|
+|Main|S|-|Used for menu choices|
+|Main|[esc]|-|Used to pause, bring up the menu, or dismiss things|
 
 ## Schematic
 
