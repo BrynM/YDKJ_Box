@@ -8,6 +8,7 @@ int keyboardBlocked = 3;
 int keyboardBlockedState = LOW;
 int oneThroughFourVal = 0;
 int serialTimeout = 3500;
+char lastOneThruFourKey[1];
 
 void setup() {
   Serial.begin(9600);
@@ -17,22 +18,26 @@ void setup() {
   pinMode(oneThroughFourPin, INPUT);
 
   pinMode(ledPin, OUTPUT);
-}
 
-int value_is_between(int value, int lowerBound, int upperBound) {
-  Serial.print("checking value ");
-  Serial.print(value);
-  Serial.print(" is between ");
-  Serial.print(lowerBound);
-  Serial.print(" and ");
-  Serial.println(upperBound);
-  return (int) (value >= lowerBound && value <= upperBound);
+  lastOneThruFourKey[0] = '\0';
 }
 
 void loop() {
   check_keyboard_blocked();
   char keystrokeOneThroughFour[1];
+  keystrokeOneThroughFour[0] = '\0';
   read_one_through_four(keystrokeOneThroughFour);
+}
+
+int value_is_between(int value, int lowerBound, int upperBound) {
+  return (value >= lowerBound && value <= upperBound);
+}
+
+int value_is_near(int val, int near) {
+  return value_is_near(val, near, 10);
+}
+int value_is_near(int val, int near, int variance) {
+  return (val >= (near - variance) && val <= (near+variance));
 }
 
 int read_one_through_four(char *intoVar) {
@@ -54,20 +59,25 @@ int read_one_through_four(char *intoVar) {
   } else {
     Serial.print("oddball one through four value: ");
     Serial.println(value);
-    return 0;
   }
 
-  Serial.print("one through four pressed - key: ");
-  Serial.println(key);
+  if(lastOneThruFourKey[0] != key[0]) {
+    Serial.print("one through four pressed - key: ");
+    Serial.print(key);
+    Serial.print(" val: ");
+    Serial.println(value);
+  
+    intoVar = key;
+    return 1;
+  }
 
-  intoVar = key;
-  return 1;
+  return 0;
 }
 
 int get_one_through_four_value() {
   int oneThroughFourCurr = analogRead(oneThroughFourPin);
 
-  if(oneThroughFourCurr != oneThroughFourVal) {
+  if(!value_is_near(oneThroughFourCurr, oneThroughFourVal)) {
     // only print if changed
     Serial.print("New One-Through-Four value. Was: ");
     Serial.print(oneThroughFourVal);
@@ -75,6 +85,8 @@ int get_one_through_four_value() {
     Serial.print(" Is: ");
     Serial.println(oneThroughFourVal);
   }
+
+  return oneThroughFourVal;
 }
 
 int check_keyboard_blocked() {
