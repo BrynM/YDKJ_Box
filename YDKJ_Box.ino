@@ -1,4 +1,5 @@
-#include "boxutils.h"
+#include "box_utils.h"
+#include "kb_block.h"
 #include "LadderButton.h"
 
 const int oneThroughFourPin = A5;
@@ -9,19 +10,36 @@ void setup() {
   Serial.begin(9600);
   wait_for_serial();
 
-  pinMode(PIN_LED, OUTPUT);
-  pinMode(PIN_SWITCH, INPUT);
+  board_debug_info();
+  
+  setup_keyboard_block();
+  setup_ladder_buttons();
 
-  pinMode(oneThroughFourPin, INPUT);
+  LadderButton oneThroughFour(oneThroughFourPin);
+  oneThroughFour.setup();
 
-  lastOneThruFourKey[0] = '\0';
+  keystroke oneThroughFourOne;
+  oneThroughFourOne.value = 25;
+  oneThroughFourOne.variance = 25;
+  oneThroughFourOne.key = "1";
+
+//  setup_one_through_four();
+}
+
+void setup_ladder_buttons() {
 }
 
 void loop() {
-  check_keyboard_blocked();
-  char keystrokeOneThroughFour[1];
-  keystrokeOneThroughFour[0] = '\0';
-  read_one_through_four(keystrokeOneThroughFour);
+  loop_keyboard_block();
+
+  //char keystrokeOneThroughFour[1];
+  //keystrokeOneThroughFour[0] = '\0';
+  //read_one_through_four(keystrokeOneThroughFour);
+}
+
+void setup_one_through_four() {
+  use_pin(oneThroughFourPin, INPUT);
+  lastOneThruFourKey[0] = '\0';
 }
 
 int read_one_through_four(char *intoVar) {
@@ -40,17 +58,21 @@ int read_one_through_four(char *intoVar) {
     key[0] = '3';
   } else if(value_is_between(value, 450, 500)) {
     key[0] = '4';
-  } else {
-    Serial.print("oddball one through four value: ");
-    Serial.println(value);
+  #ifdef DEBUGGING
+    } else {
+        Serial.print("oddball one through four value: ");
+        Serial.println(value);
+  #endif
   }
 
   if(lastOneThruFourKey[0] != key[0]) {
-    Serial.print("one through four pressed - key: ");
-    Serial.print(key);
-    Serial.print(" val: ");
-    Serial.println(value);
-  
+    #ifdef DEBUGGING
+      Serial.print("one through four pressed - key: ");
+      Serial.print(key);
+      Serial.print(" val: ");
+      Serial.println(value);
+    #endif
+
     intoVar = key;
     return 1;
   }
@@ -62,12 +84,17 @@ int get_one_through_four_value() {
   int oneThroughFourCurr = analogRead(oneThroughFourPin);
 
   if(!value_is_near(oneThroughFourCurr, oneThroughFourVal)) {
-    // only print if changed
-    Serial.print("New One-Through-Four value. Was: ");
-    Serial.print(oneThroughFourVal);
+    #ifdef DEBUGGING
+      Serial.print("New One-Through-Four value. Was: ");
+      Serial.print(oneThroughFourVal);
+    #endif
+
     oneThroughFourVal = oneThroughFourCurr;
-    Serial.print(" Is: ");
-    Serial.println(oneThroughFourVal);
+
+    #ifdef DEBUGGING
+      Serial.print(" Is: ");
+      Serial.println(oneThroughFourVal);
+    #endif
   }
 
   return oneThroughFourVal;
