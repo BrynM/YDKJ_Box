@@ -1,23 +1,18 @@
+#include "boxutils.h"
 #include "LadderButton.h"
 
-const int switchPin = 3;
-const int ledPin =  2;
 const int oneThroughFourPin = A5;
-
-int keyboardBlocked = 3;
-int keyboardBlockedState = LOW;
 int oneThroughFourVal = 0;
-int serialTimeout = 3500;
 char lastOneThruFourKey[1];
 
 void setup() {
   Serial.begin(9600);
   wait_for_serial();
 
-  pinMode(switchPin, INPUT);
-  pinMode(oneThroughFourPin, INPUT);
+  pinMode(PIN_LED, OUTPUT);
+  pinMode(PIN_SWITCH, INPUT);
 
-  pinMode(ledPin, OUTPUT);
+  pinMode(oneThroughFourPin, INPUT);
 
   lastOneThruFourKey[0] = '\0';
 }
@@ -27,17 +22,6 @@ void loop() {
   char keystrokeOneThroughFour[1];
   keystrokeOneThroughFour[0] = '\0';
   read_one_through_four(keystrokeOneThroughFour);
-}
-
-int value_is_between(int value, int lowerBound, int upperBound) {
-  return (value >= lowerBound && value <= upperBound);
-}
-
-int value_is_near(int val, int near) {
-  return value_is_near(val, near, 10);
-}
-int value_is_near(int val, int near, int variance) {
-  return (val >= (near - variance) && val <= (near+variance));
 }
 
 int read_one_through_four(char *intoVar) {
@@ -87,37 +71,6 @@ int get_one_through_four_value() {
   }
 
   return oneThroughFourVal;
-}
-
-int check_keyboard_blocked() {
-  int kbSwitchState = digitalRead(switchPin);
-
-  if (kbSwitchState == keyboardBlockedState) {
-    digitalWrite(ledPin, HIGH);
-    if(keyboardBlocked != kbSwitchState) {
-      Serial.println("keyboard block enabled");
-    }
-  } else {
-    digitalWrite(ledPin, LOW);
-    if(keyboardBlocked != kbSwitchState) {
-      Serial.println("keyboard block disabled");
-    }
-  }
-
-  keyboardBlocked = kbSwitchState;
-
-  return keyboardBlocked;
-}
-
-void wait_for_serial() {
-  int serialBreak = 0;
-  int startMilliS = millis();
-  
-  while (!Serial && !serialBreak) {
-    if((millis() - startMilliS) >= serialTimeout) {
-      serialBreak = 1;
-    }
-  }
 }
 
 
