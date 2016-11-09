@@ -1,16 +1,20 @@
 #include "Arduino.h"
 #include "box_utils.h"
 #include "box_boards.h"
+#include <string.h>
 
 int used_box_pins[MAX_BOX_PINS];
 
 void board_debug_info() {
   #ifdef DEBUGGING
-    Serial.print("###################################\n");
+    Serial.print("########################################\n");
     Serial.print("#\n");
     Serial.print("# You Don't Know Jack in a Box\n");
     Serial.print("#\n");
-    Serial.print("###################################\n");
+    Serial.print("########################################\n");
+    Serial.print("# ");
+    Serial.print(BOX_WEBSITE);
+    Serial.println();
     Serial.print("# Compiled for ");
     Serial.print(__BOX_BOARD__);
     Serial.println();
@@ -24,9 +28,29 @@ void board_debug_info() {
     Serial.print(" ");
     Serial.print(__AVR_LIBC_VERSION_STRING__);
     Serial.println();
-    Serial.print("###################################\n\n");
+    Serial.print("########################################\n\n");
   #endif
 }
+
+void serial_timestamp() {
+  #ifdef DEBUGGING
+    Serial.print(FUNC_ANNOUNCE_PREFIX);
+    Serial.print(millis());
+    Serial.print(FUNC_ANNOUNCE_SUFFIX);
+  #endif
+}
+
+void serial_timestamp(char *funcName) {
+  #ifdef DEBUGGING
+    Serial.print(FUNC_ANNOUNCE_PREFIX);
+    Serial.print(millis());
+    Serial.print("ms # ");
+    Serial.print(funcName);
+    Serial.print("()");
+    Serial.print(FUNC_ANNOUNCE_SUFFIX);
+  #endif
+}
+
 
 int use_pin(int pin, int ioMode) {
   int lastIter = 0;
@@ -39,10 +63,10 @@ int use_pin(int pin, int ioMode) {
 
     if(used_box_pins[i] == pin) {
       #ifdef DEBUGGING
-        Serial.print(__func__);
-        Serial.print("() failed pin ");
+        FUNC_MSG(__func__);
+        Serial.print("failed pin ");
         Serial.print(pin);
-        Serial.print(" in slot ");
+        Serial.print(" slot ");
         Serial.println(i);
       #endif
 
@@ -54,10 +78,10 @@ int use_pin(int pin, int ioMode) {
   pinMode(pin, ioMode);
 
   #ifdef DEBUGGING
-    Serial.print(__func__);
-    Serial.print("() reserved pin ");
+    FUNC_MSG(__func__);
+    Serial.print("reserved pin ");
     Serial.print(pin);
-    Serial.print(" in slot ");
+    Serial.print(" slot ");
     Serial.print(lastIter);
     Serial.print(" (");
     Serial.print(MAX_BOX_PINS - (lastIter + 1));

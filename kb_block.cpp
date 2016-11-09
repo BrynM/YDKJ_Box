@@ -18,8 +18,8 @@ void loop_keyboard_block() {
 
       #ifdef DEBUGGING
         if(keyboardBlocked != kbSwitchState) {
-          Serial.print(__func__);
-          Serial.println("() block enabled");
+          FUNC_MSG(__func__);
+          Serial.println("enabled");
         }
       #endif
     } else {
@@ -27,8 +27,8 @@ void loop_keyboard_block() {
 
       #ifdef DEBUGGING
         if(keyboardBlocked != kbSwitchState) {
-          Serial.print(__func__);
-          Serial.println("() block disabled");
+          FUNC_MSG(__func__);
+          Serial.println("disabled");
         }
       #endif
     }

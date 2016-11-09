@@ -67,6 +67,7 @@ int read_one_through_four(char *intoVar) {
 
   if(lastOneThruFourKey[0] != key[0]) {
     #ifdef DEBUGGING
+      FUNC_MSG(__func__);
       Serial.print("one through four pressed - key: ");
       Serial.print(key);
       Serial.print(" val: ");
@@ -85,6 +86,7 @@ int get_one_through_four_value() {
 
   if(!value_is_near(oneThroughFourCurr, oneThroughFourVal)) {
     #ifdef DEBUGGING
+      FUNC_MSG(__func__);
       Serial.print("New One-Through-Four value. Was: ");
       Serial.print(oneThroughFourVal);
     #endif
