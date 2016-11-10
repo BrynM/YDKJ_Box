@@ -345,8 +345,7 @@ bool LadderButton::setup() {
 
     #ifdef DEBUGGING
       CLASS_MSG(instanceName, __func__);
-      Serial.print("Started Keyboard interface. Initiated by pin ");
-      Serial.println(analogPin);
+      Serial.println("Started global HID Keyboard.");
     #endif
   }
 
