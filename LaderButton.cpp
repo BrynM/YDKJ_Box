@@ -9,22 +9,22 @@ int keyboardLibBegun = 0;
 int ladderButtonCount = 0;
 
 LadderButton::LadderButton() {
-  init_members(LADDERBUTTON_EMPTY_PIN, LADDERBUTTON_DEFAULT_COOLDOWN_MS);
+  init_members(LADDERBUTTON_EMPTY_PIN, LADDERBUTTON_DEFAULT_PIN_COOLDOWN_MS);
 }
 LadderButton::LadderButton(char *lbName) {
-  init_members(lbName, LADDERBUTTON_EMPTY_PIN, LADDERBUTTON_DEFAULT_COOLDOWN_MS);
+  init_members(lbName, LADDERBUTTON_EMPTY_PIN, LADDERBUTTON_DEFAULT_PIN_COOLDOWN_MS);
 }
 LadderButton::LadderButton(int onPin) {
-  init_members(onPin, LADDERBUTTON_DEFAULT_COOLDOWN_MS);
+  init_members(onPin, LADDERBUTTON_DEFAULT_PIN_COOLDOWN_MS);
 }
 LadderButton::LadderButton(char *lbName, int onPin) {
-  init_members(lbName, onPin, LADDERBUTTON_DEFAULT_COOLDOWN_MS);
+  init_members(lbName, onPin, LADDERBUTTON_DEFAULT_PIN_COOLDOWN_MS);
 }
-LadderButton::LadderButton(int onPin, int withCooldownMs) {
-  init_members(onPin, withCooldownMs);
+LadderButton::LadderButton(int onPin, int withCooldownMsPin) {
+  init_members(onPin, withCooldownMsPin);
 }
-LadderButton::LadderButton(char *lbName, int onPin, int withCooldownMs) {
-  init_members(lbName, onPin, withCooldownMs);
+LadderButton::LadderButton(char *lbName, int onPin, int withCooldownMsPin) {
+  init_members(lbName, onPin, withCooldownMsPin);
 }
 
 bool LadderButton::activate() {
@@ -61,16 +61,16 @@ void  LadderButton::generate_instance_name(char *intoVar) {
   strcat(intoVar, " LadderButton");
 }
 
-bool LadderButton::init_members(int onPin, int withCooldownMs) {
+bool LadderButton::init_members(int onPin, int withCooldownMsPin) {
   keyCount = 0;
   lastPinCheck = millis();
   pinValue = 0;
 
   char dummyBuff[LADDERBUTTON_NAME_SIZE];
 
-  return init_members(onPin, withCooldownMs, dummyBuff);
+  return init_members(onPin, withCooldownMsPin, dummyBuff);
 }
-bool LadderButton::init_members(char *lbName, int onPin, int withCooldownMs) {
+bool LadderButton::init_members(char *lbName, int onPin, int withCooldownMsPin) {
   keyCount = 0;
   lastPinCheck = millis();
   pinValue = 0;
@@ -84,7 +84,7 @@ bool LadderButton::init_members(char *lbName, int onPin, int withCooldownMs) {
   ladderButtonIndex = ladderButtonCount;
   ladderButtonCount++;
 
-  if(set_analog_pin(onPin) && set_cooldown_ms(withCooldownMs)) {
+  if(set_analog_pin(onPin) && set_cooldown_ms_pin(withCooldownMsPin)) {
     #ifdef DEBUGGING
       CLASS_MSG(instanceName, __func__);
       Serial.println("Finished initialization.");
@@ -153,7 +153,7 @@ int LadderButton::read_pin_raw() {
 
   int elapsed = millis() - lastPinCheck;
 
-  if(elapsed < cooldownMs) {
+  if(elapsed < cooldownMsPin) {
     #ifdef NOISY_DEBUGGING
       CLASS_MSG(instanceName, __func__);
       Serial.print("Pin ");
@@ -161,7 +161,7 @@ int LadderButton::read_pin_raw() {
       Serial.print(" is still cooling down (");
       Serial.print(elapsed);
       Serial.print(" < ");
-      Serial.print(cooldownMs);
+      Serial.print(cooldownMsPin);
       Serial.println(").");
     #endif
 
@@ -275,32 +275,32 @@ bool LadderButton::set_analog_pin(int newAnalogPin) {
   return false;
 }
 
-bool LadderButton::set_cooldown_ms(int newCoolMs) {
+bool LadderButton::set_cooldown_ms_pin(int newCoolMs) {
   if(newCoolMs > -1) {
-    if(newCoolMs == cooldownMs) {
+    if(newCoolMs == cooldownMsPin) {
       #ifdef DEBUGGING
         CLASS_MSG(instanceName, __func__);
         Serial.print("Pin cooldown ");
         Serial.print(analogPin);
         Serial.print(" unchanged ");
-        Serial.println(cooldownMs);
+        Serial.println(cooldownMsPin);
       #endif
       return false;
     }
 
-    cooldownMs = newCoolMs;
+    cooldownMsPin = newCoolMs;
 
     return true;
   }
 
-  cooldownMs = LADDERBUTTON_DEFAULT_COOLDOWN_MS;
+  cooldownMsPin = LADDERBUTTON_DEFAULT_PIN_COOLDOWN_MS;
 
   #ifdef DEBUGGING
     CLASS_MSG(instanceName, __func__);
     Serial.print("Pin cooldown ");
     Serial.print(analogPin);
     Serial.print(" fell back to default cooldown milliseconds ");
-    Serial.println(cooldownMs);
+    Serial.println(cooldownMsPin);
   #endif
 
   return false;
