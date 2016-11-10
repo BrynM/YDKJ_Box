@@ -1,27 +1,42 @@
+#include <Keyboard.h>
 #include "box_utils.h"
 #include "kb_block.h"
+#include "Keystroke.h"
 #include "LadderButton.h"
 
 const int oneThroughFourPin = A5;
+const int playerOnePin = A2;
 int oneThroughFourVal = 0;
 char lastOneThruFourKey[1];
+
+LadderButton buttonsOneThroughFour("OneThruFour", oneThroughFourPin);
+// 1023 idle
+Keystroke oneThroughFour_Idle(1023, '\0');
+Keystroke oneThroughFour_One(5, "1");
+Keystroke oneThroughFour_Two(130, "2");
+Keystroke oneThroughFour_Three(300, "3");
+Keystroke oneThroughFour_Four(450, "4");
+
+LadderButton playerOne("PlayerOne", playerOnePin);
+// 1023 idle
+Keystroke playerOne_Idle(1023, '\0');
+Keystroke playerOne_Q(1, "q");
+Keystroke playerOne_S(133, "s");
 
 void setup() {
   Serial.begin(9600);
   wait_for_serial();
 
+delay(1000);
   board_debug_info();
   
   setup_keyboard_block();
   setup_ladder_buttons();
 
-  LadderButton oneThroughFour(oneThroughFourPin);
-  oneThroughFour.setup();
-
-  keystroke oneThroughFourOne;
-  oneThroughFourOne.value = 25;
-  oneThroughFourOne.variance = 25;
-  oneThroughFourOne.key = "1";
+  //oneThroughFour_One.set_variance(25);
+  buttonsOneThroughFour.setup();
+  playerOne.setup();
+//  buttonsOneThroughFour.send_key(KEY_RIGHT_GUI);
 
 //  setup_one_through_four();
 }
@@ -32,13 +47,17 @@ void setup_ladder_buttons() {
 void loop() {
   loop_keyboard_block();
 
+  buttonsOneThroughFour.read_pin_raw();
+  playerOne.read_pin_raw();
+
+
   //char keystrokeOneThroughFour[1];
   //keystrokeOneThroughFour[0] = '\0';
   //read_one_through_four(keystrokeOneThroughFour);
 }
 
 void setup_one_through_four() {
-  use_pin(oneThroughFourPin, INPUT);
+  pin_activate(oneThroughFourPin, INPUT);
   lastOneThruFourKey[0] = '\0';
 }
 
@@ -50,13 +69,13 @@ int read_one_through_four(char *intoVar) {
   if(value_is_between(value, 1000, 1100)) {
     // no keystroke - idle resistance
     return 0;
-  } else if(value_is_between(value, 0, 50)) {
+  } else if(value_is_between(value, -1, 51)) {
     key[0] = '1';
-  } else if(value_is_between(value, 100, 150)) {
+  } else if(value_is_between(value, 99, 151)) {
     key[0] = '2';
-  } else if(value_is_between(value, 300, 350)) {
+  } else if(value_is_between(value, 299, 351)) {
     key[0] = '3';
-  } else if(value_is_between(value, 450, 500)) {
+  } else if(value_is_between(value, 449, 501)) {
     key[0] = '4';
   #ifdef DEBUGGING
     } else {

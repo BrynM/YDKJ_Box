@@ -2,7 +2,335 @@
 #include <Keyboard.h>
 #include "box_utils.h"
 #include "kb_block.h"
+#include "Keystroke.h"
 #include "LadderButton.h"
+
+int keyboardLibBegun = 0;
+int ladderButtonCount = 0;
+
+LadderButton::LadderButton() {
+  init_members(LADDERBUTTON_EMPTY_PIN, LADDERBUTTON_DEFAULT_COOLDOWN_MS);
+}
+LadderButton::LadderButton(char *lbName) {
+  init_members(lbName, LADDERBUTTON_EMPTY_PIN, LADDERBUTTON_DEFAULT_COOLDOWN_MS);
+}
+LadderButton::LadderButton(int onPin) {
+  init_members(onPin, LADDERBUTTON_DEFAULT_COOLDOWN_MS);
+}
+LadderButton::LadderButton(char *lbName, int onPin) {
+  init_members(lbName, onPin, LADDERBUTTON_DEFAULT_COOLDOWN_MS);
+}
+LadderButton::LadderButton(int onPin, int withCooldownMs) {
+  init_members(onPin, withCooldownMs);
+}
+LadderButton::LadderButton(char *lbName, int onPin, int withCooldownMs) {
+  init_members(lbName, onPin, withCooldownMs);
+}
+
+bool LadderButton::activate() {
+  if(!pin_activate(analogPin, INPUT)) {
+    pin_active(false);
+
+    #ifdef DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.print("Could not activate pin ");
+      Serial.println(analogPin);
+    #endif
+
+    return false;
+  }
+
+  pin_active(true);
+
+  #ifdef DEBUGGING
+    CLASS_MSG(instanceName, __func__);
+    Serial.print("Pin ");
+    Serial.print(analogPin);
+    Serial.println(" activated.");
+  #endif
+
+  return true;
+}
+
+bool LadderButton::add_key(Keystroke key) {
+return false;
+}
+
+void  LadderButton::generate_instance_name(char *intoVar) {
+  itoa(ladderButtonCount, intoVar, 10);
+  strcat(intoVar, " LadderButton");
+}
+
+bool LadderButton::init_members(int onPin, int withCooldownMs) {
+  keyCount = 0;
+  lastPinCheck = millis();
+  pinValue = 0;
+
+  char dummyBuff[LADDERBUTTON_NAME_SIZE];
+
+  return init_members(onPin, withCooldownMs, dummyBuff);
+}
+bool LadderButton::init_members(char *lbName, int onPin, int withCooldownMs) {
+  keyCount = 0;
+  lastPinCheck = millis();
+  pinValue = 0;
+
+  if(strlen(lbName) != 0) {
+    strcpy(instanceName, lbName);
+  } else {
+    generate_instance_name(instanceName);
+  }
+
+  ladderButtonIndex = ladderButtonCount;
+  ladderButtonCount++;
+
+  if(set_analog_pin(onPin) && set_cooldown_ms(withCooldownMs)) {
+    #ifdef DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.println("Finished initialization.");
+    #endif
+
+    return true;
+  }
+
+  #ifdef DEBUGGING
+    CLASS_MSG(instanceName, __func__);
+    Serial.println("FAILED initialization.");
+  #endif
+
+  return false;
+}
+
+bool LadderButton::pin_active() {
+  return pinActive;
+}
+bool LadderButton::pin_active(bool setTo) {
+  if(setTo) {
+    pinActive = true;
+  } else {
+    pinActive = false;
+  }
+
+  #ifdef DEBUGGING
+    CLASS_MSG(instanceName, __func__);
+    Serial.print("Set pin ");
+    Serial.print(analogPin);
+    Serial.print(" active state to ");
+    Serial.println(pinActive);
+  #endif
+
+  return pinActive;
+}
+
+bool LadderButton::read_key(char *intoVar) {
+  int currValue = read_pin_raw();
+}
+
+int LadderButton::read_pin_raw() {
+  if(analogPin < 0) {
+    #ifdef DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.print("Pin ");
+      Serial.print(analogPin);
+      Serial.print(" is invalid (too low).");
+    #endif
+
+    return -1;
+  }
+
+  if(!pin_active()) {
+    #ifdef NOISY_DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.print("Pin ");
+      Serial.print(analogPin);
+      Serial.print(" is not active (");
+      Serial.print(pinActive);
+      Serial.println(").");
+    #endif
+
+    return -1;
+  }
+
+  int elapsed = millis() - lastPinCheck;
+
+  if(elapsed < cooldownMs) {
+    #ifdef NOISY_DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.print("Pin ");
+      Serial.print(analogPin);
+      Serial.print(" is still cooling down (");
+      Serial.print(elapsed);
+      Serial.print(" < ");
+      Serial.print(cooldownMs);
+      Serial.println(").");
+    #endif
+
+    return pinValue;
+  }
+
+  int pinCurr = analogRead(analogPin);
+
+  if(!value_is_near(pinCurr, pinValue)) {
+    #ifdef DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.print("Reading pin ");
+      Serial.print(analogPin);
+      Serial.print(" Was: ");
+      Serial.print(pinValue);
+    #endif
+
+    pinValue = pinCurr;
+  
+    #ifdef DEBUGGING
+      Serial.print(" Is: ");
+      Serial.println(pinValue);
+    #endif
+  #ifdef NOISY_DEBUGGING
+  } else {
+    CLASS_MSG(instanceName, __func__);
+    Serial.print("Pin ");
+    Serial.print(analogPin);
+    Serial.print(" has not changed value (");
+    Serial.print(pinValue);
+    Serial.println(").");
+  #endif
+  }
+
+  lastPinCheck = millis();
+
+  return pinValue;
+}
+
+bool LadderButton::send_key(char key) {
+  return send_key((uint8_t)atoi(key));
+}
+bool LadderButton::send_key(int key) {
+  return send_key((uint8_t)key);
+}
+bool LadderButton::send_key(uint8_t key) {
+  if(check_keyboard_block()) {
+    #ifdef DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.print("Keyboard blocked. Cannot sent key \"");
+      char buff[3];
+      itoa(buff, key, 10);
+      Serial.print(buff);
+      Serial.print("\" (");
+      Serial.print(key);
+      Serial.print(") for pin ");
+      Serial.println(analogPin);
+    #endif
+
+    return false;
+  }
+
+  #ifdef DEBUGGING
+    CLASS_MSG(instanceName, __func__);
+    Serial.print("Sending \"");
+    char buff[3];
+    itoa(buff, key, 10);
+    Serial.print(buff);
+    Serial.print("\" (");
+    Serial.print(key);
+    Serial.print(") to keyboard from pin ");
+    Serial.println(analogPin);
+  #endif
+
+  Keyboard.write(key);
+
+  return true;
+}
+
+bool LadderButton::set_analog_pin(int newAnalogPin) {
+  if(newAnalogPin > -1) {
+    if(newAnalogPin == analogPin) {
+      #ifdef DEBUGGING
+        CLASS_MSG(instanceName, __func__);
+        Serial.print("Analog pin ");
+        Serial.print(analogPin);
+        Serial.println(" unchanged.");
+      #endif
+
+      return false;
+    }
+
+    analogPin = newAnalogPin;
+
+    #ifdef DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.print("Analog pin set to ");
+      Serial.println(analogPin);
+    #endif
+
+    return true;
+  } 
+
+  analogPin = LADDERBUTTON_EMPTY_PIN;
+
+  if(newAnalogPin == LADDERBUTTON_EMPTY_PIN) {
+    // desired an emptying of the pin
+    return true;
+  }
+
+  return false;
+}
+
+bool LadderButton::set_cooldown_ms(int newCoolMs) {
+  if(newCoolMs > -1) {
+    if(newCoolMs == cooldownMs) {
+      #ifdef DEBUGGING
+        CLASS_MSG(instanceName, __func__);
+        Serial.print("Pin cooldown ");
+        Serial.print(analogPin);
+        Serial.print(" unchanged ");
+        Serial.println(cooldownMs);
+      #endif
+      return false;
+    }
+
+    cooldownMs = newCoolMs;
+
+    return true;
+  }
+
+  cooldownMs = LADDERBUTTON_DEFAULT_COOLDOWN_MS;
+
+  #ifdef DEBUGGING
+    CLASS_MSG(instanceName, __func__);
+    Serial.print("Pin cooldown ");
+    Serial.print(analogPin);
+    Serial.print(" fell back to default cooldown milliseconds ");
+    Serial.println(cooldownMs);
+  #endif
+
+  return false;
+}
+
+bool LadderButton::setup() {
+  if(!activate()) {
+    #ifdef DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.print("Failed to activate analog pin ");
+      Serial.println(analogPin);
+    #endif
+
+    return false;
+  }
+
+  if(!keyboardLibBegun) {
+    keyboardLibBegun = 1;
+    Keyboard.begin();
+
+    #ifdef DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.print("Started Keyboard interface. Initiated by pin ");
+      Serial.println(analogPin);
+    #endif
+  }
+
+  return true;
+}
+
 /*
 
 also: http://www.usb.org/developers/hidpage/Hut1_12v2.pdf
@@ -44,57 +372,5 @@ KEY_F9  0xCA  202
 KEY_F10 0xCB  203
 KEY_F11 0xCC  204
 KEY_F12 0xCD  205
-*/
-
-int keyboard_lib_begun = 0;
-
-/*
- * Keystroke
- */
-
-Keystroke::Keystroke(int targetValue, char sendKey) {
-  value = targetValue;
-  key = sendKey;
-  variance = DEFAULT_KEYSTROKE_VARIANCE;
-}
-int Keystroke::set_variance(int newVariance) {
-  variance = newVariance;
-}
-
-/*
- * LadderButton
- */
-
-LadderButton::LadderButton (int onPin) {
-  analogPin = onPin;
-}
-
-int LadderButton::fire_key(char key) {
-  return LadderButton::fire_key((uint8_t)atoi(key));
-}
-int LadderButton::fire_key(uint8_t key) {
-  if(check_keyboard_block() || key) {
-    return 0;
-  }
-
-  Keyboard.write(key);
-
-  return 1;
-}
-
-void LadderButton::setup() {
-  if(analogPin > 0) {
-    if(!keyboard_lib_begun) {
-      keyboard_lib_begun = 1;
-      Keyboard.begin();
-    }
-
-    use_pin(analogPin, INPUT);
-  }
-}
-/*
-typedef struct ladderButton {
-  keystroke buttons[6];
-} ladderButton;
 */
 

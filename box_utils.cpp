@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "box_utils.h"
 #include "box_boards.h"
-#include <string.h>
 
 int used_box_pins[MAX_BOX_PINS];
 
@@ -51,8 +50,21 @@ void serial_timestamp(char *funcName) {
   #endif
 }
 
+void serial_timestamp(char *className, char *funcName) {
+  #ifdef DEBUGGING
+    Serial.print(FUNC_ANNOUNCE_PREFIX);
+    Serial.print(millis());
+    Serial.print("ms # ");
+    Serial.print(className);
+    Serial.print("::");
+    Serial.print(funcName);
+    Serial.print("()");
+    Serial.print(FUNC_ANNOUNCE_SUFFIX);
+  #endif
+}
 
-int use_pin(int pin, int ioMode) {
+
+int pin_activate(int pin, int ioMode) {
   int lastIter = 0;
 
   for(int i = 0; i < MAX_BOX_PINS; i++) {
@@ -64,7 +76,7 @@ int use_pin(int pin, int ioMode) {
     if(used_box_pins[i] == pin) {
       #ifdef DEBUGGING
         FUNC_MSG(__func__);
-        Serial.print("failed pin ");
+        Serial.print("Failed pin ");
         Serial.print(pin);
         Serial.print(" slot ");
         Serial.println(i);
@@ -79,7 +91,7 @@ int use_pin(int pin, int ioMode) {
 
   #ifdef DEBUGGING
     FUNC_MSG(__func__);
-    Serial.print("reserved pin ");
+    Serial.print("Reserved pin ");
     Serial.print(pin);
     Serial.print(" slot ");
     Serial.print(lastIter);
@@ -92,7 +104,7 @@ int use_pin(int pin, int ioMode) {
 }
 
 int value_is_between(int value, int lowerBound, int upperBound) {
-  return (value >= lowerBound && value <= upperBound);
+  return (value > lowerBound && value < upperBound);
 }
 
 int value_is_near(int val, int near) {
