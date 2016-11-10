@@ -38,6 +38,14 @@ void loop_keyboard_block() {
 }
 
 void setup_keyboard_block() {
+  #ifdef DEBUGGING
+    FUNC_MSG(__func__);
+    Serial.print("Setting up keyboard block switch on pin ");
+    Serial.print(KEYBOARD_BLOCK_PIN_SWITCH);
+    Serial.print(" with LED on pin ");
+    Serial.println(KEYBOARD_BLOCK_PIN_LED);
+  #endif
+
   pin_activate(KEYBOARD_BLOCK_PIN_LED, OUTPUT);
   pin_activate(KEYBOARD_BLOCK_PIN_SWITCH, INPUT);
   // get the first loop in
