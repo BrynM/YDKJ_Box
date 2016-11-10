@@ -31,23 +31,10 @@ bool LadderButton::activate() {
   if(!pin_activate(analogPin, INPUT)) {
     pin_active(false);
 
-    #ifdef DEBUGGING
-      CLASS_MSG(instanceName, __func__);
-      Serial.print("Could not activate pin ");
-      Serial.println(analogPin);
-    #endif
-
     return false;
   }
 
   pin_active(true);
-
-  #ifdef DEBUGGING
-    CLASS_MSG(instanceName, __func__);
-    Serial.print("Pin ");
-    Serial.print(analogPin);
-    Serial.println(" activated.");
-  #endif
 
   return true;
 }
@@ -122,6 +109,10 @@ bool LadderButton::pin_active(bool setTo) {
   return pinActive;
 }
 
+bool LadderButton::read_key() {
+  char dummyBuff;
+  return read_key(dummyBuff);
+}
 bool LadderButton::read_key(char *intoVar) {
   int currValue = read_pin_raw();
 }
@@ -301,6 +292,37 @@ bool LadderButton::set_cooldown_ms_pin(int newCoolMs) {
     Serial.print(analogPin);
     Serial.print(" fell back to default cooldown milliseconds ");
     Serial.println(cooldownMsPin);
+  #endif
+
+  return false;
+}
+
+bool LadderButton::set_cooldown_ms_key(int newCoolMs) {
+  if(newCoolMs > -1) {
+    if(newCoolMs == cooldownMsKey) {
+      #ifdef DEBUGGING
+        CLASS_MSG(instanceName, __func__);
+        Serial.print("Key cooldown ");
+        Serial.print(analogPin);
+        Serial.print(" unchanged ");
+        Serial.println(cooldownMsKey);
+      #endif
+      return false;
+    }
+
+    cooldownMsKey = newCoolMs;
+
+    return true;
+  }
+
+  cooldownMsKey = LADDERBUTTON_DEFAULT_KEY_COOLDOWN_MS;
+
+  #ifdef DEBUGGING
+    CLASS_MSG(instanceName, __func__);
+    Serial.print("Key cooldown ");
+    Serial.print(analogPin);
+    Serial.print(" fell back to default cooldown milliseconds ");
+    Serial.println(cooldownMsKey);
   #endif
 
   return false;

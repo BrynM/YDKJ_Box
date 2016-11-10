@@ -47,7 +47,7 @@ void setup_ladder_buttons() {
 void loop() {
   loop_keyboard_block();
 
-  buttonsOneThroughFour.read_pin_raw();
+  buttonsOneThroughFour.read_key();
   playerOne.read_pin_raw();
 
 

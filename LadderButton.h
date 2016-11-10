@@ -41,9 +41,9 @@
         bool activate();
         bool add_key(Keystroke key);
         bool pin_active();
+        bool read_key();
         bool read_key(char *intoVar);
         int read_pin_raw();
-        int read_pin();
         bool send_key(char key);
         bool send_key(int key);
         bool send_key(uint8_t key);
