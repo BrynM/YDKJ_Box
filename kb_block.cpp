@@ -6,7 +6,7 @@ int keyboardBlocked = 3;
 int keyboardBlockedState = LOW;
 
 int check_keyboard_block() {
-  return keyboardBlocked;
+  return (keyboardBlocked > 0);
 }
 
 void loop_keyboard_block() {
@@ -18,8 +18,8 @@ void loop_keyboard_block() {
 
       #ifdef DEBUGGING
         if(keyboardBlocked != kbSwitchState) {
-          Serial.print(__func__);
-          Serial.println("() block enabled");
+          FUNC_MSG(__func__);
+          Serial.println("Enabled");
         }
       #endif
     } else {
@@ -27,8 +27,8 @@ void loop_keyboard_block() {
 
       #ifdef DEBUGGING
         if(keyboardBlocked != kbSwitchState) {
-          Serial.print(__func__);
-          Serial.println("() block disabled");
+          FUNC_MSG(__func__);
+          Serial.println("Disabled");
         }
       #endif
     }
@@ -38,7 +38,9 @@ void loop_keyboard_block() {
 }
 
 void setup_keyboard_block() {
-  use_pin(KEYBOARD_BLOCK_PIN_LED, OUTPUT);
-  use_pin(KEYBOARD_BLOCK_PIN_SWITCH, INPUT);
+  pin_activate(KEYBOARD_BLOCK_PIN_LED, OUTPUT);
+  pin_activate(KEYBOARD_BLOCK_PIN_SWITCH, INPUT);
+  // get the first loop in
+  loop_keyboard_block();
 }
 

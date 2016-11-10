@@ -1,6 +1,6 @@
 // kb_block.h
-#ifndef __kb_block__
-#define __kb_block__
+#ifndef __kb_block_h__
+#define __kb_block_h__
 
   #define KEYBOARD_BLOCK_PIN_LED  2
   #define KEYBOARD_BLOCK_PIN_SWITCH 3
