@@ -33,10 +33,16 @@ delay(1000);
   setup_keyboard_block();
   setup_ladder_buttons();
 
-  //oneThroughFour_One.set_variance(25);
   buttonsOneThroughFour.setup();
   playerOne.setup();
-//  buttonsOneThroughFour.send_key(KEY_RIGHT_GUI);
+
+  //char keyDummyBuff;
+  //playerOne_S.get_keystroke(keyDummyBuff);
+  //Serial.print("Dummy ");
+  //Serial.println(keyDummyBuff);
+  char fakeKey = "s";
+  buttonsOneThroughFour.send_key(fakeKey);
+  //buttonsOneThroughFour.send_key(KEY_RIGHT_GUI);
 
 //  setup_one_through_four();
 }

@@ -13,10 +13,10 @@
   void serial_timestamp();
   void serial_timestamp(char *funcName);
   void serial_timestamp(char *className, char *funcName);
-  int pin_activate(int pin, int ioMode);
-  int value_is_between(int value, int lowerBound, int upperBound);
-  int value_is_near(int val, int near);
-  int value_is_near(int val, int near, int variance);
+  bool pin_activate(int pin, int ioMode);
+  bool value_is_between(int value, int lowerBound, int upperBound);
+  bool value_is_near(int val, int near);
+  bool value_is_near(int val, int near, int variance);
   void wait_for_serial();
 
   #define FUNC_MSG(f) \

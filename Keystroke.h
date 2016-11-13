@@ -6,7 +6,7 @@
    * Keystroke
    */
 
-  #define DEFAULT_KEYSTROKE_VARIANCE 30
+  #define KEYSTROKE_DEFAULT_VARIANCE 30
 
   class Keystroke {
     char key;
@@ -17,11 +17,14 @@
       Keystroke::Keystroke();
       Keystroke(int targetValue, char sendKey);
       Keystroke::Keystroke(int targetValue, char sendKey, int withVariance);
-      int set_key(char newKey);
-      int set_key(int newKey);
-      int set_key(uint8_t newKey);
-      int set_value(int newValue);
-      int set_variance(int newVariance);
+      uint8_t get_keystroke();
+      void get_keystroke(char *intoVar);
+      bool matches_value(int value);
+      bool set_key(char newKey);
+      bool set_key(int newKey);
+      bool set_key(uint8_t newKey);
+      bool set_value(int newValue);
+      bool set_variance(int newVariance);
   };
  
 #endif

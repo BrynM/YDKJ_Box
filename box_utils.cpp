@@ -64,7 +64,7 @@ void serial_timestamp(char *className, char *funcName) {
 }
 
 
-int pin_activate(int pin, int ioMode) {
+bool pin_activate(int pin, int ioMode) {
   int lastIter = 0;
 
   for(int i = 0; i < MAX_BOX_PINS; i++) {
@@ -82,7 +82,7 @@ int pin_activate(int pin, int ioMode) {
         Serial.println(i);
       #endif
 
-      return 0;
+      return false;
     }
   }
 
@@ -100,17 +100,17 @@ int pin_activate(int pin, int ioMode) {
     Serial.println(" remain)");
   #endif
 
-  return 1;
+  return true;
 }
 
-int value_is_between(int value, int lowerBound, int upperBound) {
+bool value_is_between(int value, int lowerBound, int upperBound) {
   return (value > lowerBound && value < upperBound);
 }
 
-int value_is_near(int val, int near) {
+bool value_is_near(int val, int near) {
   return value_is_near(val, near, 10);
 }
-int value_is_near(int val, int near, int variance) {
+bool value_is_near(int val, int near, int variance) {
   return (val >= (near - variance) && val <= (near+variance));
 }
 

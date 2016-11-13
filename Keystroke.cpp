@@ -5,13 +5,13 @@
 
 Keystroke::Keystroke() {
   value = -1;
-  key = '\0';
-  variance = -1;
+  key = (uint8_t)atoi('\0');
+  set_variance(KEYSTROKE_DEFAULT_VARIANCE);
 }
 Keystroke::Keystroke(int targetValue, char sendKey) {
   value = targetValue;
   key = sendKey;
-  set_variance(DEFAULT_KEYSTROKE_VARIANCE);
+  set_variance(KEYSTROKE_DEFAULT_VARIANCE);
 }
 Keystroke::Keystroke(int targetValue, char sendKey, int withVariance) {
   value = targetValue;
@@ -19,34 +19,50 @@ Keystroke::Keystroke(int targetValue, char sendKey, int withVariance) {
   set_variance(withVariance);
 }
 
-int Keystroke::set_key(char newKey) {
+uint8_t Keystroke::get_keystroke() {
+  return key;
+}
+void Keystroke::get_keystroke(char *intoVar) {
+  strcpy(intoVar, key);
+  //itoa(key, intoVar, 8);
+}
+
+bool Keystroke::matches_value(int testValue) {
+  if(value > -1) {
+    return false;
+  }
+
+  return value_is_near(testValue, value, variance);
+}
+
+bool Keystroke::set_key(char newKey) {
   return set_key((uint8_t)atoi(newKey));
 }
-int Keystroke::set_key(int newKey) {
+bool Keystroke::set_key(int newKey) {
   return set_key((uint8_t)newKey);
 }
-int Keystroke::set_key(uint8_t newKey) {
+bool Keystroke::set_key(uint8_t newKey) {
   key = newKey;
-  return 1;
+  return true;
 }
 
-int Keystroke::set_value(int newValue) {
+bool Keystroke::set_value(int newValue) {
   if(newValue > -1) {
     value = newValue;
-    return 1;
+    return true;
   }
 
-  return 0;
+  return false;
 }
 
-int Keystroke::set_variance(int newVariance) {
+bool Keystroke::set_variance(int newVariance) {
   if(newVariance > -1) {
     variance = newVariance;
-    return 1;
+    return true;
   }
 
-  variance = 0;
+  variance = KEYSTROKE_DEFAULT_VARIANCE;
 
-  return 0;
+  return false;
 }
 

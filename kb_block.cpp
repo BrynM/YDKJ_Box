@@ -3,17 +3,16 @@
 #include "kb_block.h"
 
 int keyboardBlocked = 3;
-int keyboardBlockedState = LOW;
 
 int check_keyboard_block() {
   return (keyboardBlocked > 0);
 }
 
 void loop_keyboard_block() {
-  if(KEYBOARD_BLOCK_LOOP_THROTTLE > 1 && millis() % KEYBOARD_BLOCK_LOOP_THROTTLE == 0) {
-    int kbSwitchState = digitalRead(KEYBOARD_BLOCK_PIN_SWITCH);
+//  if(KEYBOARD_BLOCK_LOOP_THROTTLE > 1 && millis() % KEYBOARD_BLOCK_LOOP_THROTTLE == 0) {
+    int kbSwitchState = digitalRead(KEYBOARD_BLOCK_PIN_SWITCH) == KEYBOARD_SWITCH_BLOCKED_EXPECTED;
   
-    if (kbSwitchState == keyboardBlockedState) {
+    if (kbSwitchState == KEYBOARD_SWITCH_BLOCKED_EXPECTED) {
       digitalWrite(KEYBOARD_BLOCK_PIN_LED, HIGH);
 
       #ifdef DEBUGGING
@@ -32,9 +31,9 @@ void loop_keyboard_block() {
         }
       #endif
     }
-  
+
     keyboardBlocked = kbSwitchState;
-  }
+//  }
 }
 
 void setup_keyboard_block() {

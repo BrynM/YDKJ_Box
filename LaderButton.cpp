@@ -193,7 +193,29 @@ int LadderButton::read_pin_raw() {
 }
 
 bool LadderButton::send_key(char key) {
-  return send_key((uint8_t)atoi(key));
+  if(check_keyboard_block()) {
+    #ifdef DEBUGGING
+      CLASS_MSG(instanceName, __func__);
+      Serial.print("Keyboard blocked. Cannot sent keystroke \"");
+      Serial.print(key);
+      Serial.print("\" for pin ");
+      Serial.println(analogPin);
+    #endif
+
+    return false;
+  }
+
+  #ifdef DEBUGGING
+    CLASS_MSG(instanceName, __func__);
+    Serial.print("Sending keystroke \"");
+    Serial.print(key);
+    Serial.print("\" for pin ");
+    Serial.println(analogPin);
+  #endif
+
+  Keyboard.write(key);
+
+  return true;
 }
 bool LadderButton::send_key(int key) {
   return send_key((uint8_t)key);
